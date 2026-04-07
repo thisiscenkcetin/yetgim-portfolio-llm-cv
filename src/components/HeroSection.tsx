@@ -44,9 +44,9 @@ const HeroSection = ({ onCanvasClick }: HeroSectionProps) => {
           onClick={onCanvasClick}
           className="absolute top-2 -right-4 md:top-4 md:-right-6 translate-x-full animate-float cursor-pointer"
         >
-          <div className="glass-chat rounded-2xl px-5 py-3.5 text-[13px] text-[#f5f5f7]/90 font-medium shadow-[0_8px_32px_rgba(0,0,0,0.3)] max-w-[200px] md:max-w-[220px] relative border border-[#f5f5f7]/[0.06]">
+          <div className="bg-white/70 dark:bg-black/65 backdrop-blur-[20px] backdrop-saturate-[1.8] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.1)] dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.1)] rounded-2xl px-5 py-3.5 text-[13px] text-black dark:text-[#f5f5f7]/90 font-medium max-w-[200px] md:max-w-[220px] relative">
             {t("hero.bubble")}
-            <div className="absolute left-0 top-1/2 -translate-x-2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[8px] border-r-[rgba(40,40,42,0.85)]" />
+            <div className="absolute left-0 top-1/2 -translate-x-2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-r-[8px] border-r-[rgba(255,255,255,0.7)] dark:border-r-[rgba(0,0,0,0.65)]" />
           </div>
         </motion.div>
       </motion.div>

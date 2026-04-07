@@ -150,20 +150,20 @@ const ChatOverlay = ({ isOpen, onClose }: ChatOverlayProps) => {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: "100%", opacity: 0 }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            className="fixed bottom-6 right-6 z-[70] w-[380px] max-w-[calc(100vw-48px)] h-[520px] rounded-[20px] glass-chat flex flex-col overflow-hidden shadow-apple-hover border border-[#f5f5f7]/[0.06]"
+            className="fixed bottom-6 right-6 z-[70] w-[380px] max-w-[calc(100vw-48px)] h-[520px] rounded-[20px] bg-white/70 dark:bg-black/65 backdrop-blur-[20px] backdrop-saturate-[1.8] shadow-[0_8px_32px_rgba(0,0,0,0.1),inset_0_0_0_1px_rgba(0,0,0,0.05)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_0_0_1px_rgba(255,255,255,0.1)] flex flex-col overflow-hidden"
           >
             {/* Header */}
-            <div className="px-5 py-4 flex items-center justify-between border-b border-[#f5f5f7]/10">
+            <div className="px-5 py-4 flex items-center justify-between border-b border-black/10 dark:border-white/10">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-apple-blue/50 to-apple-blue/20 flex items-center justify-center">
                   <div className="w-3 h-3 rounded-full bg-apple-blue animate-pulse" />
                 </div>
                 <div>
-                  <h3 className="text-[#f5f5f7] text-sm font-semibold">{t("chat.title")}</h3>
-                  <p className="text-[#f5f5f7]/40 text-[11px]">{t("chat.status")}</p>
+                  <h3 className="text-black dark:text-[#f5f5f7] text-sm font-semibold">{t("chat.title")}</h3>
+                  <p className="text-black/60 dark:text-[#f5f5f7]/40 text-[11px]">{t("chat.status")}</p>
                 </div>
               </div>
-              <button onClick={onClose} className="w-8 h-8 rounded-full bg-[#f5f5f7]/10 hover:bg-[#f5f5f7]/20 flex items-center justify-center text-[#f5f5f7]/60 text-sm transition-colors">✕</button>
+              <button onClick={onClose} className="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 flex items-center justify-center text-black/60 dark:text-[#f5f5f7]/60 text-sm transition-colors">✕</button>
             </div>
 
             {/* Messages */}
@@ -173,7 +173,7 @@ const ChatOverlay = ({ isOpen, onClose }: ChatOverlayProps) => {
                   className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
                 >
                   <div className={`max-w-[80%] px-4 py-2.5 rounded-[16px] text-[13px] apple-body leading-relaxed ${
-                    msg.role === "user" ? "bg-apple-blue text-[#f5f5f7] rounded-br-[4px]" : "bg-[#f5f5f7]/10 text-[#f5f5f7]/90 rounded-bl-[4px]"
+                    msg.role === "user" ? "bg-apple-blue text-white rounded-br-[4px]" : "bg-black/5 dark:bg-white/10 text-black/90 dark:text-[#f5f5f7]/90 rounded-bl-[4px]"
                   }`}>
                     {msg.content}
                   </div>
@@ -181,11 +181,11 @@ const ChatOverlay = ({ isOpen, onClose }: ChatOverlayProps) => {
               ))}
               {isLoading && (
                 <div className="flex justify-start">
-                  <div className="bg-[#f5f5f7]/10 px-4 py-3 rounded-[16px] rounded-bl-[4px]">
+                  <div className="bg-black/5 dark:bg-white/10 px-4 py-3 rounded-[16px] rounded-bl-[4px]">
                     <span className="inline-flex gap-1.5 items-center">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#f5f5f7]/40 animate-bounce" style={{ animationDelay: "0ms" }} />
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#f5f5f7]/40 animate-bounce" style={{ animationDelay: "150ms" }} />
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#f5f5f7]/40 animate-bounce" style={{ animationDelay: "300ms" }} />
+                      <span className="w-1.5 h-1.5 rounded-full bg-black/40 dark:bg-white/40 animate-bounce" style={{ animationDelay: "0ms" }} />
+                      <span className="w-1.5 h-1.5 rounded-full bg-black/40 dark:bg-white/40 animate-bounce" style={{ animationDelay: "150ms" }} />
+                      <span className="w-1.5 h-1.5 rounded-full bg-black/40 dark:bg-white/40 animate-bounce" style={{ animationDelay: "300ms" }} />
                     </span>
                   </div>
                 </div>
@@ -207,14 +207,14 @@ const ChatOverlay = ({ isOpen, onClose }: ChatOverlayProps) => {
             )}
 
             {/* Input */}
-            <div className="p-4 border-t border-[#f5f5f7]/10">
+            <div className="p-4 border-t border-black/10 dark:border-white/10">
               <div className="flex gap-2">
                 <input type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleSend()}
                   placeholder={t("chat.placeholder")}
-                  className="flex-1 bg-[#f5f5f7]/10 text-[#f5f5f7] text-sm rounded-pill px-4 py-2.5 placeholder:text-[#f5f5f7]/30 border-none outline-none focus:ring-1 focus:ring-apple-blue/50"
+                  className="flex-1 bg-black/5 dark:bg-white/10 text-black dark:text-[#f5f5f7] text-sm rounded-pill px-4 py-2.5 placeholder:text-black/30 dark:placeholder:text-white/30 border-none outline-none focus:ring-1 focus:ring-apple-blue/50"
                 />
                 <button onClick={handleSend} disabled={isLoading || !input.trim()}
-                  className="bg-apple-blue hover:bg-apple-blue/90 disabled:opacity-40 text-[#f5f5f7] w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-200"
+                  className="bg-apple-blue hover:bg-apple-blue/90 disabled:opacity-40 text-white w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-200"
                 >↑</button>
               </div>
             </div>

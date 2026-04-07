@@ -24,8 +24,8 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`fixed top-0 w-full z-50 transition-all duration-500 glass-nav ${
-        scrolled ? "py-2.5 shadow-[0_1px_0_rgba(245,245,247,0.06)]" : "py-4"
+      className={`fixed top-0 w-full z-50 transition-all duration-500 bg-white/70 dark:bg-black/65 backdrop-blur-[20px] backdrop-saturate-[1.8] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.1)] dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.1)] ${
+        scrolled ? "py-2.5" : "py-4"
       }`}
     >
       <div className="max-w-[1200px] mx-auto px-6 flex justify-between items-center">
