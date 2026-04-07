@@ -1,0 +1,128 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 0%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 0%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 0%;
+    --primary: 214 100% 45%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 2% 96%;
+    --secondary-foreground: 0 0% 15%;
+    --muted: 240 2% 96%;
+    --muted-foreground: 0 0% 45%;
+    --accent: 240 2% 96%;
+    --accent-foreground: 0 0% 15%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 214 100% 45%;
+    --radius: 0.75rem;
+
+    /* Apple tokens */
+    --apple-blue: 214 100% 45%;
+    --apple-black: 0 0% 0%;
+    --apple-dark: 240 2% 16%;
+    --apple-light: 240 2% 96%;
+    --apple-grey: 0 0% 56%;
+    --apple-card-shadow: 0 3px 30px rgba(0, 0, 0, 0.22);
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 0 0% 0%;
+    --foreground: 0 0% 98%;
+    --card: 240 2% 16%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 2% 16%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 213 100% 57%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 2% 16%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 2% 16%;
+    --muted-foreground: 0 0% 64%;
+    --accent: 240 2% 16%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 213 100% 57%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+}
+
+@layer utilities {
+  .apple-heading {
+    letter-spacing: -0.28px;
+    line-height: 1.07;
+  }
+  .apple-body {
+    letter-spacing: -0.374px;
+    line-height: 1.47;
+  }
+  .glass-nav {
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+  }
+  .glass-chat {
+    background: rgba(40, 40, 42, 0.85);
+    backdrop-filter: saturate(180%) blur(30px);
+    -webkit-backdrop-filter: saturate(180%) blur(30px);
+  }
+  .section-dark {
+    @apply bg-[#000000] text-[#f5f5f7];
+  }
+  .section-dark-alt {
+    background-color: #272729;
+    @apply text-[#f5f5f7];
+  }
+  .section-light {
+    background-color: #f5f5f7;
+    @apply text-[#1d1d1f];
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateX(100%) translateY(0); }
+  50% { transform: translateX(100%) translateY(-8px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
