@@ -57,10 +57,10 @@ const HeroSection = ({ onCanvasClick }: HeroSectionProps) => {
         transition={{ duration: 0.9, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
         className="text-center px-6 max-w-3xl z-10"
       >
-        <h1 className="text-4xl md:text-6xl lg:text-[72px] font-bold apple-heading text-[#f5f5f7] mb-5 leading-[1.05]">
-          Cenk Çetin.
+        <h1 className="apple-display-hero apple-heading text-[#f5f5f7] mb-5">
+          Cenk Çetin
         </h1>
-        <p className="text-lg md:text-2xl font-medium text-apple-grey apple-heading leading-[1.2]">
+        <p className="text-xl md:text-2xl font-medium text-apple-grey apple-body leading-relaxed">
           {t("hero.subtitle")}
         </p>
       </motion.div>

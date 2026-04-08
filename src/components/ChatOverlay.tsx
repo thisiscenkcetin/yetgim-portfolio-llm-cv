@@ -144,7 +144,13 @@ const ChatOverlay = ({ isOpen, onClose }: ChatOverlayProps) => {
     <AnimatePresence>
       {isOpen && (
         <>
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="fixed inset-0 z-[60] bg-black/40" />
+          <motion.div 
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
+            exit={{ opacity: 0 }} 
+            onClick={onClose} 
+            className="fixed inset-0 z-[60] bg-black/40" 
+          />
           <motion.div
             initial={{ y: "100%", opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -152,28 +158,52 @@ const ChatOverlay = ({ isOpen, onClose }: ChatOverlayProps) => {
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
             className="fixed bottom-6 right-6 z-[70] w-[380px] max-w-[calc(100vw-48px)] h-[520px] rounded-[20px] bg-white/70 dark:bg-black/65 backdrop-blur-[20px] backdrop-saturate-[1.8] shadow-[0_8px_32px_rgba(0,0,0,0.1),inset_0_0_0_1px_rgba(0,0,0,0.05)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.3),inset_0_0_0_1px_rgba(255,255,255,0.1)] flex flex-col overflow-hidden"
           >
-            {/* Header */}
-            <div className="px-5 py-4 flex items-center justify-between border-b border-black/10 dark:border-white/10">
+            {/* Header — Enhanced with better typography & hover effects */}
+            <div className="px-5 py-4 flex items-center justify-between border-b border-black/10 dark:border-white/10 bg-gradient-to-r from-transparent via-transparent to-transparent">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-apple-blue/50 to-apple-blue/20 flex items-center justify-center">
-                  <div className="w-3 h-3 rounded-full bg-apple-blue animate-pulse" />
-                </div>
+                <motion.div 
+                  className="w-8 h-8 rounded-full bg-gradient-to-br from-[#0071e3]/50 to-[#0071e3]/20 flex items-center justify-center"
+                  whileHover={{ scale: 1.1 }}
+                >
+                  <motion.div 
+                    className="w-3 h-3 rounded-full bg-[#0071e3]" 
+                    animate={{ opacity: [1, 0.5, 1] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  />
+                </motion.div>
                 <div>
-                  <h3 className="text-black dark:text-[#f5f5f7] text-sm font-semibold">{t("chat.title")}</h3>
-                  <p className="text-black/60 dark:text-[#f5f5f7]/40 text-[11px]">{t("chat.status")}</p>
+                  <h3 className="chat-header-title text-black dark:text-[#f5f5f7]">
+                    {t("chat.title")}
+                  </h3>
+                  <p className="text-black/50 dark:text-[#f5f5f7]/50 text-xs font-medium tracking-tight">
+                    {t("chat.status")}
+                  </p>
                 </div>
               </div>
-              <button onClick={onClose} className="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 flex items-center justify-center text-black/60 dark:text-[#f5f5f7]/60 text-sm transition-colors">✕</button>
+              <motion.button 
+                onClick={onClose} 
+                whileHover={{ scale: 1.15, rotate: 90 }}
+                whileTap={{ scale: 0.9 }}
+                className="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 hover:bg-black/10 dark:hover:bg-white/20 flex items-center justify-center text-black/60 dark:text-[#f5f5f7]/60 text-sm transition-colors duration-200"
+              >
+                ✕
+              </motion.button>
             </div>
 
-            {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-5 space-y-3">
+            {/* Messages Container — Improved spacing & scrolling */}
+            <div className="flex-1 overflow-y-auto p-5 space-y-4 scroll-smooth">
               {messages.map((msg, i) => (
-                <motion.div key={i} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}
+                <motion.div 
+                  key={i} 
+                  initial={{ opacity: 0, y: 12, scale: 0.95 }} 
+                  animate={{ opacity: 1, y: 0, scale: 1 }} 
+                  transition={{ duration: 0.3, delay: i * 0.05 }}
                   className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
                 >
-                  <div className={`max-w-[80%] px-4 py-2.5 rounded-[16px] text-[13px] apple-body leading-relaxed ${
-                    msg.role === "user" ? "bg-apple-blue text-white rounded-br-[4px]" : "bg-black/5 dark:bg-white/10 text-black/90 dark:text-[#f5f5f7]/90 rounded-bl-[4px]"
+                  <div className={`max-w-[80%] px-4 py-3 rounded-[12px] text-[15px] font-normal leading-relaxed transition-all duration-200 ${
+                    msg.role === "user" 
+                      ? "chat-bubble-user shadow-[0_2px_8px_rgba(0,113,227,0.3)]" 
+                      : "chat-bubble-assistant dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.1)]"
                   }`}>
                     {msg.content}
                   </div>
@@ -181,11 +211,23 @@ const ChatOverlay = ({ isOpen, onClose }: ChatOverlayProps) => {
               ))}
               {isLoading && (
                 <div className="flex justify-start">
-                  <div className="bg-black/5 dark:bg-white/10 px-4 py-3 rounded-[16px] rounded-bl-[4px]">
-                    <span className="inline-flex gap-1.5 items-center">
-                      <span className="w-1.5 h-1.5 rounded-full bg-black/40 dark:bg-white/40 animate-bounce" style={{ animationDelay: "0ms" }} />
-                      <span className="w-1.5 h-1.5 rounded-full bg-black/40 dark:bg-white/40 animate-bounce" style={{ animationDelay: "150ms" }} />
-                      <span className="w-1.5 h-1.5 rounded-full bg-black/40 dark:bg-white/40 animate-bounce" style={{ animationDelay: "300ms" }} />
+                  <div className="bg-black/5 dark:bg-white/[0.08] px-4 py-3 rounded-[12px] rounded-bl-[2px] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.05)]">
+                    <span className="inline-flex gap-2 items-center">
+                      <motion.span 
+                        className="w-1.5 h-1.5 rounded-full bg-black/40 dark:bg-white/40" 
+                        animate={{ y: [0, -6, 0] }}
+                        transition={{ duration: 0.8, repeat: Infinity }}
+                      />
+                      <motion.span 
+                        className="w-1.5 h-1.5 rounded-full bg-black/40 dark:bg-white/40" 
+                        animate={{ y: [0, -6, 0] }}
+                        transition={{ duration: 0.8, repeat: Infinity, delay: 0.15 }}
+                      />
+                      <motion.span 
+                        className="w-1.5 h-1.5 rounded-full bg-black/40 dark:bg-white/40" 
+                        animate={{ y: [0, -6, 0] }}
+                        transition={{ duration: 0.8, repeat: Infinity, delay: 0.3 }}
+                      />
                     </span>
                   </div>
                 </div>
@@ -193,29 +235,51 @@ const ChatOverlay = ({ isOpen, onClose }: ChatOverlayProps) => {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Quick prompts */}
+            {/* Quick Prompts — Enhanced sizing & interactivity */}
             {messages.length === 1 && (
-              <div className="px-5 pb-2 flex flex-wrap gap-1.5">
-                {[t("chat.q1"), t("chat.q2"), t("chat.q3")].map((q) => (
-                  <button key={q} onClick={() => sendMessage(q)}
-                    className="text-[11px] font-medium px-3 py-1.5 rounded-pill bg-apple-blue/10 text-apple-blue-dark hover:bg-apple-blue/20 transition-colors"
+              <motion.div 
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.4 }}
+                className="px-5 pb-3 flex flex-wrap gap-2.5"
+              >
+                {[t("chat.q1"), t("chat.q2"), t("chat.q3")].map((q, idx) => (
+                  <motion.button 
+                    key={q} 
+                    onClick={() => sendMessage(q)}
+                    whileHover={{ scale: 1.05, y: -2 }}
+                    whileTap={{ scale: 0.95 }}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 + idx * 0.08, duration: 0.3 }}
+                    className="chat-quick-prompt bg-[#0071e3]/10 text-[#0071e3] hover:bg-[#0071e3]/20 border border-[#0071e3]/30 hover:border-[#0071e3]/50 shadow-none hover:shadow-[0_2px_8px_rgba(0,113,227,0.2)]"
                   >
                     {q}
-                  </button>
+                  </motion.button>
                 ))}
-              </div>
+              </motion.div>
             )}
 
-            {/* Input */}
-            <div className="p-4 border-t border-black/10 dark:border-white/10">
-              <div className="flex gap-2">
-                <input type="text" value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={(e) => e.key === "Enter" && handleSend()}
+            {/* Input Section — Enhanced focus states & interactions */}
+            <div className="p-4 border-t border-black/10 dark:border-white/10 bg-gradient-to-t from-white/40 dark:from-black/40 to-transparent">
+              <div className="flex gap-2.5 items-center">
+                <input 
+                  type="text" 
+                  value={input} 
+                  onChange={(e) => setInput(e.target.value)} 
+                  onKeyDown={(e) => e.key === "Enter" && handleSend()}
                   placeholder={t("chat.placeholder")}
-                  className="flex-1 bg-black/5 dark:bg-white/10 text-black dark:text-[#f5f5f7] text-sm rounded-pill px-4 py-2.5 placeholder:text-black/30 dark:placeholder:text-white/30 border-none outline-none focus:ring-1 focus:ring-apple-blue/50"
+                  className="chat-input-field flex-1 text-black dark:text-[#f5f5f7] text-sm rounded-full px-4 py-2.5 placeholder:text-black/35 dark:placeholder:text-white/35 border border-transparent focus:border-[#0071e3]/30 outline-none transition-all duration-200"
                 />
-                <button onClick={handleSend} disabled={isLoading || !input.trim()}
-                  className="bg-apple-blue hover:bg-apple-blue/90 disabled:opacity-40 text-white w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-200"
-                >↑</button>
+                <motion.button 
+                  onClick={handleSend} 
+                  disabled={isLoading || !input.trim()}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  className="chat-send-btn w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold transition-all duration-200 disabled:opacity-50 disabled:scale-100 disabled:cursor-not-allowed"
+                >
+                  ↑
+                </motion.button>
               </div>
             </div>
           </motion.div>

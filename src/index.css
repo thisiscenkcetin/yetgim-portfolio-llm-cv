@@ -1,8 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 @layer base {
   :root {
@@ -87,40 +87,161 @@
 }
 
 @layer utilities {
+  /* Apple Typography Hierarchy — SF Pro Optical Sizing Principle */
   .apple-heading {
     letter-spacing: -0.28px;
     line-height: 1.07;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
   .apple-body {
     letter-spacing: -0.374px;
     line-height: 1.47;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
+  .apple-display-hero {
+    @apply text-4xl md:text-5xl lg:text-[56px] font-bold;
+    letter-spacing: -0.28px;
+    line-height: 1.07;
+  }
+  .apple-section-heading {
+    @apply text-3xl md:text-[40px] font-semibold;
+    letter-spacing: auto;
+    line-height: 1.1;
+  }
+  .apple-caption {
+    @apply text-sm font-medium;
+    letter-spacing: -0.224px;
+    line-height: 1.29;
+  }
+  
+  /* Apple Glass Effect — Navigation & Modals */
   .glass-nav {
     background: rgba(0, 0, 0, 0.8);
     backdrop-filter: saturate(180%) blur(20px);
     -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
   .glass-chat {
     background: rgba(40, 40, 42, 0.85);
     backdrop-filter: saturate(180%) blur(30px);
     -webkit-backdrop-filter: saturate(180%) blur(30px);
   }
+  
+  /* Apple Shadow System — Soft Diffused Only */
+  .shadow-apple {
+    box-shadow: rgba(0, 0, 0, 0.22) 3px 5px 30px 0px;
+  }
+  .shadow-apple-hover {
+    box-shadow: rgba(0, 0, 0, 0.22) 3px 8px 40px 0px;
+  }
+  .shadow-apple-lg {
+    box-shadow: rgba(0, 0, 0, 0.22) 3px 12px 50px 0px;
+  }
+  
+  /* Apple Card Styling — Glassmorphism with Inset Highlights */
+  .card-glass-light {
+    @apply bg-white/70 backdrop-blur-[20px];
+    backdrop-filter: blur(20px) saturate(180%);
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.04) 3px 5px 30px 0px;
+  }
+  .card-glass-dark {
+    @apply bg-black/65 backdrop-blur-[20px];
+    backdrop-filter: blur(20px) saturate(180%);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1), rgba(0, 0, 0, 0.3) 3px 5px 30px 0px;
+  }
+  
+  /* Apple Button Styles */
+  .btn-primary-apple {
+    @apply bg-[#0071e3] hover:bg-[#0066cc] text-white font-medium px-6 py-2.5 rounded-lg;
+    transition: all 300ms cubic-bezier(0.25, 0.1, 0.25, 1);
+    box-shadow: none;
+  }
+  .btn-pill-apple {
+    @apply px-6 py-2.5 rounded-full font-medium text-base;
+    border-radius: 980px;
+    transition: all 300ms cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+  .btn-pill-light {
+    @apply text-[#0066cc] border border-[#0066cc] bg-transparent hover:bg-[#0066cc]/5;
+  }
+  .btn-pill-dark {
+    @apply text-[#2997ff] border border-[#2997ff] bg-transparent hover:bg-[#2997ff]/5;
+  }
+  
+  /* Section Backgrounds — Cinematic Rhythm */
   .section-dark {
     @apply bg-[#000000] text-[#f5f5f7];
   }
   .section-dark-alt {
-    background-color: #272729;
-    @apply text-[#f5f5f7];
+    @apply bg-[#272729] text-[#f5f5f7];
   }
   .section-light {
-    background-color: #f5f5f7;
-    @apply text-[#1d1d1f];
+    @apply bg-[#f5f5f7] text-[#1d1d1f];
+  }
+  
+  /* Container Constraints — Apple Max Width */
+  .apple-container {
+    @apply max-w-[980px] mx-auto px-6;
+  }
+
+  /* Chat Modal Specific Styles */
+  .chat-header-title {
+    @apply text-base font-semibold;
+    letter-spacing: -0.24px;
+    line-height: 1.2;
+  }
+  .chat-body-text {
+    @apply text-[15px] font-normal;
+    letter-spacing: -0.324px;
+    line-height: 1.5;
+  }
+  .chat-quick-prompt {
+    @apply text-xs font-medium px-4 py-2 rounded-xl;
+    letter-spacing: -0.16px;
+    transition: all 200ms cubic-bezier(0.2, 0, 0.2, 1);
+  }
+  .chat-bubble-user {
+    @apply bg-[#0071e3] text-white rounded-[12px] rounded-br-[2px];
+    animation: bubbleIn 0.3s ease-out;
+  }
+  .chat-bubble-assistant {
+    @apply bg-black/5 dark:bg-white/[0.08] text-black/90 dark:text-white/90 rounded-[12px] rounded-bl-[2px];
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.05), inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
+    animation: bubbleIn 0.3s ease-out;
+  }
+  .chat-input-field {
+    @apply bg-black/[0.06] dark:bg-white/[0.08] text-black dark:text-white;
+    border: 1px solid transparent;
+    transition: all 200ms ease-out;
+  }
+  .chat-input-field:focus {
+    @apply bg-black/[0.08] dark:bg-white/[0.12];
+    border-color: rgba(0, 113, 227, 0.3);
+    box-shadow: 0 0 0 2px rgba(0, 113, 227, 0.1);
+  }
+  .chat-send-btn {
+    @apply bg-[#0071e3] hover:bg-[#0066cc] text-white;
+    transition: all 200ms cubic-bezier(0.2, 0, 0.2, 1);
+  }
+  .chat-send-btn:active {
+    transform: scale(0.95);
   }
 }
 
 @keyframes float {
   0%, 100% { transform: translateX(100%) translateY(0); }
   50% { transform: translateX(100%) translateY(-8px); }
+}
+
+@keyframes bubbleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 .animate-float {

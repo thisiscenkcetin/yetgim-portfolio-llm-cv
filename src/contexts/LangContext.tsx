@@ -15,9 +15,9 @@ const translations: Translations = {
   "nav.cta": { en: "Let's Talk", tr: "İletişime Geç" },
 
   // Hero
-  "hero.subtitle": { en: "Developer, Designer, Digital Creator.", tr: "Geliştirici, Tasarımcı, Dijital İçerik Üretici." },
+  "hero.subtitle": { en: "Sr. Designer | Web Developer | AI & LLM Specialist", tr: "Sr. Designer | Web Developer | AI & LLM Specialist" },
   "hero.learn": { en: "Learn more", tr: "Daha fazla" },
-  "hero.bubble": { en: "Click to chat with my AI twin ✨", tr: "AI ikizimle sohbet et ✨" },
+  "hero.bubble": { en: "Let's meet", tr: "Tanışşmasak mı?" },
 
   // Experience
   "exp.label": { en: "Professional Journey", tr: "Profesyonel Yolculuk" },
@@ -29,6 +29,16 @@ const translations: Translations = {
   "exp.canakkale.desc": {
     en: "Founded and managed a local media platform reaching 40,000+ social media followers and over 1,200,000 monthly website visitors. Oversees content strategy, editorial direction, and digital growth.",
     tr: "40.000+ sosyal medya takipçisi ve aylık 1.200.000+ web sitesi ziyaretçisine ulaşan yerel bir medya platformu kurdu ve yönetti. İçerik stratejisi, editöryal yön ve dijital büyümeyi denetler."
+  },
+  "exp.caprice.role": { en: "Graphic Designer", tr: "Grafik Tasarımcı" },
+  "exp.caprice.desc": {
+    en: "Created magazine layouts and oversaw aspects of the printing process, collaborating with public figures like Tuğba Özay. Developed early career skills in graphic design, publishing, and deadline management.",
+    tr: "Dergi tasarımları oluşturup baskı sürecinin çeşitli aşamalarını yönetti; Tuğba Özay gibi kamuoyuna mal olmuş kişilerle iş birliği yaptı. Grafik tasarım, yayıncılık ve zaman yönetimi konularında kariyerin erken dönem becerilerini geliştirdi."
+  },
+  "exp.nokta_paper.role": { en: "Graphic Designer", tr: "Grafik Tasarımcı" },
+  "exp.nokta_paper.desc": {
+    en: "Designed newspaper layouts, visualized editorial content, and collaborated with local political figures. Gained intensive practical experience in a fast-paced newsroom environment.",
+    tr: "Gazete tasarımları hazırladı, editoryal içeriği görselleştirdi ve yerel siyasi figürlerle iş birliği yaptı. Hızlı tempolu bir haber odası ortamında yoğun pratik deneyim kazandı."
   },
   "exp.nokta.role": { en: "Web Developer & Graphic Designer", tr: "Web Geliştirici & Grafik Tasarımcı" },
   "exp.nokta.desc": {
