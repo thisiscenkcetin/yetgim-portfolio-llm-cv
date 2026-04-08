@@ -98,12 +98,32 @@ export default {
           from: { opacity: "0" },
           to: { opacity: "1" },
         },
+        shimmer: {
+          "0%": { backgroundPosition: "0% 0%" },
+          "100%": { backgroundPosition: "200% 0%" },
+        },
+        "glow-pulse": {
+          "0%, 100%": { boxShadow: "0 0 5px rgba(0, 113, 227, 0.3)" },
+          "50%": { boxShadow: "0 0 20px rgba(0, 113, 227, 0.6)" },
+        },
+        "glass-shine": {
+          "0%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" },
+        },
+        "morph-scale": {
+          "0%, 100%": { transform: "scale(1)", borderRadius: "12px" },
+          "50%": { transform: "scale(1.05)", borderRadius: "16px" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "slide-up": "slide-up 0.5s cubic-bezier(0.16, 1, 0.3, 1)",
         "fade-in": "fade-in 0.3s ease-out",
+        shimmer: "shimmer 3s linear infinite",
+        "glow-pulse": "glow-pulse 2s ease-in-out infinite",
+        "glass-shine": "glass-shine 3s linear infinite",
+        "morph-scale": "morph-scale 3s ease-in-out infinite",
       },
     },
   },

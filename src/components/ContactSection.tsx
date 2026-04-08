@@ -17,16 +17,44 @@ const ContactSection = () => {
           {t("contact.subtitle")}
         </motion.p>
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.3 }} className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <a href="mailto:dev.cenkcetin@gmail.com" className="btn-primary-apple shadow-apple hover:shadow-apple-lg">
+          <motion.a 
+            href="mailto:dev.cenkcetin@gmail.com" 
+            className="btn-primary-apple shadow-apple hover:shadow-apple-lg"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
             dev.cenkcetin@gmail.com
-          </a>
-          <a href="tel:+905525927390" className="btn-pill-apple btn-pill-dark">
+          </motion.a>
+          <motion.a 
+            href="tel:+905525927390" 
+            className="btn-pill-apple btn-pill-dark"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
             +90 552 592 73 90
-          </a>
+          </motion.a>
         </motion.div>
-        <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.5 }} className="mt-10 flex justify-center gap-8">
-          <a href="https://linkedin.com/in/thisiscenkcetin" target="_blank" rel="noopener noreferrer" className="text-apple-grey hover:text-apple-blue text-sm transition-colors duration-300">LinkedIn</a>
-          <a href="https://behance.net/cenkcetin" target="_blank" rel="noopener noreferrer" className="text-apple-grey hover:text-apple-blue text-sm transition-colors duration-300">Behance</a>
+        <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.5 }} className="mt-10 flex justify-center gap-6">
+          <motion.a 
+            href="https://linkedin.com/in/thisiscenkcetin" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="px-5 py-2.5 rounded-full text-sm font-semibold text-apple-blue bg-apple-blue/10 border border-apple-blue/30 hover:bg-apple-blue/20 transition-all duration-300"
+            whileHover={{ scale: 1.08, boxShadow: "0 0 15px rgba(0, 113, 227, 0.3)" }}
+            whileTap={{ scale: 0.95 }}
+          >
+            LinkedIn
+          </motion.a>
+          <motion.a 
+            href="https://behance.net/cenkcetin" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="px-5 py-2.5 rounded-full text-sm font-semibold text-apple-blue bg-apple-blue/10 border border-apple-blue/30 hover:bg-apple-blue/20 transition-all duration-300"
+            whileHover={{ scale: 1.08, boxShadow: "0 0 15px rgba(0, 113, 227, 0.3)" }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Behance
+          </motion.a>
         </motion.div>
       </div>
     </section>

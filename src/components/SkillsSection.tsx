@@ -26,19 +26,44 @@ const SkillsSection = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {skills.map((skill, i) => (
-            <motion.div key={skill.category} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-              className="group card-glass-dark rounded-[20px] p-8 hover:shadow-apple-lg transition-all duration-500"
+            <motion.div 
+              key={skill.category} 
+              initial={{ opacity: 0, y: 30 }} 
+              whileInView={{ opacity: 1, y: 0 }} 
+              viewport={{ once: true }} 
+              transition={{ delay: i * 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              whileHover={{ scale: 1.02 }}
+              className="group glass-layer-2 glass-blue rounded-[20px] p-8 hover:glass-glow-blue transition-all duration-500"
             >
               <div className="flex items-start justify-between mb-5">
                 <div>
                   <h3 className="text-xl font-semibold text-[#f5f5f7] apple-heading">{skill.category}</h3>
                   <p className="text-[#f5f5f7]/40 text-sm mt-1">{skill.description}</p>
                 </div>
-                <span className="text-apple-blue/60 text-lg">{skill.icon}</span>
+                <motion.span 
+                  className="text-apple-blue text-lg"
+                  animate={{ rotate: [0, 10, 0] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                >
+                  {skill.icon}
+                </motion.span>
               </div>
-              <div className="flex flex-wrap gap-2">
-                {skill.items.map((item) => (
-                  <span key={item} className="text-sm font-medium px-4 py-2 rounded-full bg-[#f5f5f7]/10 text-[#f5f5f7]/80 group-hover:bg-[#0071e3]/20 group-hover:text-[#f5f5f7] transition-colors duration-300">{item}</span>
+              <div className="flex flex-wrap gap-2.5">
+                {skill.items.map((item, idx) => (
+                  <motion.span 
+                    key={item} 
+                    className="text-xs font-semibold px-4 py-2 rounded-full bg-apple-blue/10 text-apple-blue border border-apple-blue/30 transition-all duration-300"
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: i * 0.1 + idx * 0.05, duration: 0.4 }}
+                    whileHover={{ 
+                      scale: 1.08, 
+                      backgroundColor: "rgba(0, 113, 227, 0.2)",
+                      borderColor: "rgba(0, 113, 227, 0.6)"
+                    }}
+                  >
+                    {item}
+                  </motion.span>
                 ))}
               </div>
             </motion.div>

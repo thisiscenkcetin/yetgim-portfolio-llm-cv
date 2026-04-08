@@ -6,12 +6,12 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 0%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 0%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 0%;
+    --background: 0 0% 0%;
+    --foreground: 0 0% 98%;
+    --card: 240 2% 16%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 2% 16%;
+    --popover-foreground: 0 0% 98%;
     --primary: 214 100% 45%;
     --primary-foreground: 0 0% 100%;
     --secondary: 240 2% 96%;
@@ -246,4 +246,129 @@
 
 .animate-float {
   animation: float 3s ease-in-out infinite;
+}
+
+/* Glassmorphism Layers */
+.glass-layer-1 {
+  @apply bg-black/35 backdrop-blur-[10px];
+}
+
+.glass-layer-2 {
+  @apply bg-black/45 backdrop-blur-[20px];
+}
+
+.glass-layer-3 {
+  @apply bg-black/55 backdrop-blur-[30px];
+}
+
+/* Glass Color Tints */
+.glass-blue {
+  @apply bg-gradient-to-br from-blue-400/10 to-transparent dark:from-blue-500/10;
+}
+
+.glass-purple {
+  @apply bg-gradient-to-br from-purple-400/10 to-transparent dark:from-purple-500/10;
+}
+
+.glass-pink {
+  @apply bg-gradient-to-br from-pink-400/10 to-transparent dark:from-pink-500/10;
+}
+
+/* Glass Glow Effects */
+.glass-glow-blue {
+  box-shadow: 0 0 30px rgba(59, 130, 246, 0.5), inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+}
+
+.dark .glass-glow-blue {
+  box-shadow: 0 0 40px rgba(0, 113, 227, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+.glass-glow-purple {
+  box-shadow: 0 0 20px rgba(147, 51, 234, 0.3);
+}
+
+.dark .glass-glow-purple {
+  box-shadow: 0 0 30px rgba(168, 85, 247, 0.2);
+}
+
+.glass-glow-pink {
+  box-shadow: 0 0 20px rgba(236, 72, 153, 0.3);
+}
+
+.dark .glass-glow-pink {
+  box-shadow: 0 0 30px rgba(244, 114, 182, 0.2);
+}
+
+/* Glass Border Inset */
+.glass-border-subtle {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.glass-border-light {
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.2), inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+}
+
+/* New Keyframes for Animations */
+@keyframes shimmer {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 200% 0%; }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 5px rgba(0, 113, 227, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(0, 113, 227, 0.6); }
+}
+
+@keyframes glass-shine {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes morph-scale {
+  0%, 100% { transform: scale(1); border-radius: 12px; }
+  50% { transform: scale(1.05); border-radius: 16px; }
+}
+
+@keyframes scale-entrance {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slide-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Accessibility: Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

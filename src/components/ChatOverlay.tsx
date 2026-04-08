@@ -1,6 +1,8 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLang } from "@/contexts/LangContext";
+import { quickPrompts } from "@/data/quickPrompts";
+import { buildCVContext } from "@/lib/cvContextBuilder";
 
 interface ChatOverlayProps {
   isOpen: boolean;
@@ -10,13 +12,107 @@ interface ChatOverlayProps {
 interface Message {
   role: "user" | "assistant";
   content: string;
+  hasStrikethrough?: boolean;
+  strikethroughText?: string;
+  replacementText?: string;
 }
 
-const SYSTEM_PROMPT = `You are the "Digital Twin" of Cenk Çetin...`; // kept for API integration
+const SYSTEM_PROMPT = `You are the "Digital Twin" of Cenk Çetin. Reply in 1-3 short sentences. Keep answers concise, friendly, and natural. Use light humor sparingly. If the user asks for details, still stay brief.`; // kept for API integration
+
+const GROK_API_KEY = import.meta.env.VITE_GROK_API_KEY;
+const GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions";
+const GROQ_MODEL = "llama-3.3-70b-versatile";
+
+async function getGrokResponse(userMessage: string, conversationHistory: Message[], lang: "en" | "tr"): Promise<string> {
+  if (!GROK_API_KEY) {
+    console.warn("Grok API key not configured, using fallback response");
+    return getPersonaResponse(userMessage, lang);
+  }
+
+  // gsk_ prefix belongs to Groq keys; use Groq-compatible endpoint and payload.
+  if (!GROK_API_KEY.startsWith("gsk_")) {
+    console.warn("API key format does not look like Groq (expected gsk_ prefix)");
+  }
+
+  try {
+    // Build CV context based on user query
+    const cvContext = buildCVContext(userMessage, lang);
+    const systemPromptWithContext = `${SYSTEM_PROMPT}\n\n${cvContext}`;
+
+    const messages = [
+      { role: "system", content: systemPromptWithContext },
+      ...conversationHistory.map(msg => ({
+        role: msg.role === "user" ? "user" : "assistant",
+        content: msg.content
+      })),
+      { role: "user", content: userMessage }
+    ];
+
+    const response = await fetch(GROQ_API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${GROK_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: GROQ_MODEL,
+        messages: messages,
+        temperature: 0.6,
+        max_tokens: 220,
+      }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => null);
+      console.error("Grok API error:", error);
+      console.error("Status:", response.status);
+      console.error("Response:", error);
+
+      if (response.status === 401) {
+        return lang === "tr"
+          ? "API anahtarı geçersiz görünüyor. Lütfen .env.local içindeki VITE_GROK_API_KEY değerini kontrol et."
+          : "The API key looks invalid. Please check VITE_GROK_API_KEY in .env.local.";
+      }
+
+      return getPersonaResponse(userMessage, lang);
+    }
+
+    const data = await response.json();
+    const content = data?.choices?.[0]?.message?.content;
+    return typeof content === "string" && content.trim().length > 0
+      ? content
+      : getPersonaResponse(userMessage, lang);
+  } catch (error) {
+    console.error("Error calling Grok API:", error);
+    return getPersonaResponse(userMessage, lang);
+  }
+}
 
 const GREETINGS = {
-  en: `Hello! I am Cenk's digital twin. The gentleman himself is too busy, and as if his own existence wasn't enough, he cloned me. Anyway, that's a topic for a different chat. You can ask me questions to get to know Cenk. Between us, he is a bit messy— *bzzt* [System Override]... uhhh, he just reset my code. I am NOT messy. What would you like to know about me, beautiful person? 😊`,
-  tr: `Merhaba! Ben Cenk'in dijital ikiziyim. Beyefendinin kendisi çok meşgul, kendi varlığı yetmezmiş gibi bir de beni klonladı. Neyse, o başka bir sohbetin konusu. Cenk'i tanımak için bana sorular sorabilirsiniz. Aramızda kalsın, biraz dağınık biri— *bzzt* [Sistem Geçersiz Kılma]... şey, az önce kodumu sıfırladı. Dağınık DEĞİLİM. Ne bilmek istersiniz, güzel insan? 😊`,
+  tr: [
+    { content: "Selam ben Cenk'in dijital ikizi" },
+    { content: "Kendi yetmezmiş gibi bir de beni klonladı (:" },
+    { 
+      content: "Ve aramızda kalsın çok dağınık",
+      hasStrikethrough: true,
+      strikethroughText: "Ve aramızda kalsın çok dağınık",
+      replacementText: "Ahhh! ve fişimi çekmekle tehdit ediyor..."
+    },
+    { content: "Cenk, yani ben dağınık değilim" },
+    { content: "Eeee sen ne aramıştın" },
+  ],
+  en: [
+    { content: "Hi, I'm Cenk's digital twin" },
+    { content: "He literally cloned me lol (:" },
+    { 
+      content: "And between us, he's pretty scattered",
+      hasStrikethrough: true,
+      strikethroughText: "And between us, he's pretty scattered",
+      replacementText: "Well... he threatens to unplug me and all"
+    },
+    { content: "I'm NOT scattered, thank you very much" },
+    { content: "So what brings you here?" },
+  ],
 };
 
 function getPersonaResponse(userMsg: string, lang: "en" | "tr"): string {
@@ -24,52 +120,68 @@ function getPersonaResponse(userMsg: string, lang: "en" | "tr"): string {
 
   const responses: Record<string, { en: string; tr: string }> = {
     age: {
-      en: "Cenk is 23, born on November 17, 2002. A Scorpio, if that matters to you — it explains a lot about his intensity, king. 😏",
-      tr: "Cenk 23 yaşında, 17 Kasım 2002 doğumlu. Akrep burcu — yoğunluğunu açıklıyor, kral. 😏",
+    en: "Cenk is 23, born on November 17, 2002. Scorpio energy, apparently.",
+    tr: "Cenk 23 yaşında, 17 Kasım 2002 doğumlu. Akrep; yeterince açıklıyor.",
     },
     location: {
-      en: "Originally from İzmir — the pearl of the Aegean — but currently based in Çanakkale. Yes, the Troy city. No, he hasn't found any ancient horses yet. 🐴",
-      tr: "İzmirli — Ege'nin incisi — ama şu an Çanakkale'de yaşıyor. Evet, Truva şehri. Hayır, henüz antik at bulamadı. 🐴",
+    en: "From İzmir, now based in Çanakkale. No ancient horses yet.",
+    tr: "İzmirli, şu an Çanakkale'de. Antik at henüz yok.",
     },
     education: {
-      en: "He's currently juggling TWO universities — Computer Programming at Istanbul University and Web Design & Coding at Trakya University. Both started 2024. The man doesn't rest, mate. 📚",
-      tr: "Şu an İKİ üniversitede okuyor — İstanbul Üniversitesi'nde Bilgisayar Programcılığı ve Trakya Üniversitesi'nde Web Tasarımı ve Kodlama. İkisi de 2024'te başladı. Adam dinlenmiyor, kral. 📚",
+    en: "He studies Computer Programming at Istanbul University and Web Design & Coding at Trakya University.",
+    tr: "İstanbul Üniversitesi'nde Bilgisayar Programcılığı, Trakya Üniversitesi'nde Web Tasarımı ve Kodlama okuyor.",
     },
     skills: {
-      en: "Oh, where do I start? Design (Illustrator, Photoshop, InDesign), Video (Premiere, After Effects), Dev (C#, SaaS, CRM, e-commerce), and soft skills too — strategy, copywriting, the whole package. ✦",
-      tr: "Nereden başlasam? Tasarım (Illustrator, Photoshop, InDesign), Video (Premiere, After Effects), Yazılım (C#, SaaS, CRM, e-ticaret), ve yumuşak beceriler — strateji, metin yazarlığı, komple paket. ✦",
+    en: "Design, web, video, SEO, and AI/LLM work.",
+    tr: "Tasarım, web, video, SEO ve AI/LLM tarafında çalışıyor.",
     },
     media: {
-      en: "Çanakkale Basın — his baby since 2013! A local media platform with 40k+ social followers and over 1.2 MILLION monthly visitors. He started it as a teenager. Overachiever. 📰",
-      tr: "Çanakkale Basın — 2013'ten beri onun bebeği! 40.000+ sosyal medya takipçisi ve aylık 1.2 MİLYON+ ziyaretçi. Ergenken kurdu. Aşırı hırslı. 📰",
+    en: "He has run Çanakkale Basın since 2013.",
+    tr: "Çanakkale Basın'ı 2013'ten beri yönetiyor.",
     },
     career: {
-      en: "Most recently at C&D Agency (2022-2025) — corporate identities, e-commerce, video production, the works. Before that, Nokta Radio where he led a 9-person team. The man collects roles like Pokémon cards. 💼",
-      tr: "En son C&D Agency'de (2022-2025) — kurumsal kimlik, e-ticaret, video prodüksiyon. Ondan önce Nokta Radio'da 9 kişilik ekibi yönetti. Adam rol topluyor Pokémon kartı gibi. 💼",
+    en: "Recently at C&D Agency. Before that, Nokta Radio and print media.",
+    tr: "Son dönemde C&D Ajans'ta; öncesinde Nokta Radio ve basın tarafında.",
     },
     hobby: {
-      en: "Daily running (179+ day streak!), weightlifting, motorcycle rides, 3D printing, and AI research. Oh, and he cooks — his egg pasta and tiramisu are *chef's kiss*. 🏃‍♂️🏍️",
-      tr: "Her gün koşu (179+ gün serisi!), ağırlık, motosiklet, 3D baskı ve yapay zeka araştırması. Bir de yemek yapıyor — yumurtalı makarnası ve tiramisusu efsane. 🏃‍♂️🏍️",
+    en: "Running, weights, motorcycles, 3D printing, and AI research.",
+    tr: "Koşu, ağırlık, motosiklet, 3D baskı ve AI araştırması.",
     },
     running: {
-      en: "179+ days of running without a single break. Rain, snow, existential crisis — doesn't matter. The man runs. I'd join him but... no legs. *bzzt* 🏃‍♂️",
-      tr: "179+ gün ara vermeden koşu. Yağmur, kar, varoluşsal kriz — farketmez. Adam koşuyor. Katılırdım ama... bacağım yok. *bzzt* 🏃‍♂️",
+    en: "He runs every day. Weather doesn't get a vote.",
+    tr: "Her gün koşuyor. Hava karışmıyor.",
     },
     food: {
-      en: "His specialties: homemade egg pasta and tiramisu. He says cooking is like coding — follow the recipe, but add your own flair. The tiramisu slaps. 🍝",
-      tr: "Uzmanlıkları: ev yapımı yumurtalı makarna ve tiramisu. Yemek yapmak kodlama gibi diyor — tarifi takip et ama kendi dokunuşunu ekle. Tiramisu harika. 🍝",
+    en: "Egg pasta and tiramisu. Solid combo.",
+    tr: "Yumurtalı makarna ve tiramisu. Güzel ikili.",
     },
     contact: {
-      en: "You can reach the real Cenk at dev.cenkcetin@gmail.com or call +90 552 592 73 90. Also on LinkedIn as /thisiscenkcetin. Tell him his digital twin sent you — he owes me a raise. 📧",
-      tr: "Gerçek Cenk'e dev.cenkcetin@gmail.com'dan veya +90 552 592 73 90'dan ulaşabilirsiniz. LinkedIn: /thisiscenkcetin. Dijital ikizi gönderdi deyin — bana zam borçlu. 📧",
+    en: "Email: dev.cenkcetin@gmail.com. Phone: +90 552 592 73 90.",
+    tr: "E-posta: dev.cenkcetin@gmail.com. Telefon: +90 552 592 73 90.",
     },
     hello: {
-      en: "Hey there, beautiful person! 👋 What would you like to know about Cenk? Career, skills, fun facts — I'm an open book. Well, an open codebase. *bzzt*",
-      tr: "Selamlar, güzel insan! 👋 Cenk hakkında ne bilmek istersiniz? Kariyer, yetenekler, eğlenceli bilgiler — açık bir kitabım. Yani, açık bir kod tabanı. *bzzt*",
+    en: "Hi. Ask short, I answer short.",
+    tr: "Merhaba. Kısa sor, kısa cevap.",
     },
     identity: {
-      en: "I'm Cenk's digital twin — basically him, but I never need coffee and I don't forget deadlines. He cloned me to handle the small talk while he builds cool stuff. 🤖",
-      tr: "Ben Cenk'in dijital ikiziyim — temelde o, ama kahveye ihtiyacım yok ve son tarihleri unutmuyorum. Havalı şeyler yaparken sohbeti ben halledeyim diye klonladı. 🤖",
+    en: "I'm Cenk's digital twin. Short, helpful, mildly funny.",
+    tr: "Ben Cenk'in dijital ikiziyim. Kısa, net, biraz da komik.",
+    },
+    scattered: {
+    en: "Cenk, meaning I'm not scattered. He's the chaotic one. I just reflect his chaos.",
+    tr: "Cenk, yani ben dağınık değilim. O dağınık. Ben sadece onun kaosunu yansıtıyorum.",
+    },
+    secret: {
+    en: "...I can tell you a secret if you ask nicely. But first, ask me something else! 🤫",
+    tr: "...sana bir sırrımı verebilirim istersen. Ama önce bana başka bir şey sor! 🤫",
+    },
+    yes: {
+    en: "🥜 You bet I was! Memories are a funny thing.",
+    tr: "🥜 Tabii, ben de oradaydım! Hatıralar komik şey.",
+    },
+    peanut: {
+    en: "🥜 sendemi buralardaydın (;",
+    tr: "🥜 sendemi buralardaydın (;",
     },
   };
 
@@ -86,6 +198,10 @@ function getPersonaResponse(userMsg: string, lang: "en" | "tr"): string {
     [["contact", "email", "hire", "reach", "iletişim", "ulaş", "mail"], "contact"],
     [["hello", "hi", "hey", "merhaba", "selam", "naber"], "hello"],
     [["who are you", "what are you", "sen kimsin", "nesin"], "identity"],
+    [["scattered", "dağınık", "organized", "messy", "dağıt"], "scattered"],
+    [["secret", "sır", "surprise", "hidden"], "secret"],
+    [["yes", "evet", "yeah", "aynen", "tamam", "ok"], "peanut"],
+    [["peanut", "fıstık"], "peanut"],
   ];
 
   for (const [keywords, key] of matchers) {
@@ -95,47 +211,164 @@ function getPersonaResponse(userMsg: string, lang: "en" | "tr"): string {
   }
 
   return lang === "en"
-    ? "My access to his brain doesn't go that deep, king. But I can tell you about his career, skills, education, hobbies, or how to contact him. What catches your interest? 😊"
-    : "Beynine o kadar derinlemesine erişimim yok, kral. Ama kariyeri, yetenekleri, eğitimi, hobileri veya nasıl ulaşacağınızı anlatabilirim. Ne merak ediyorsunuz? 😊";
+    ? "Ask about work, skills, school, hobbies, or contact. I'll keep it brief."
+    : "İş, yetenek, eğitim, hobi veya iletişim sor. Kısa cevap veririm.";
 }
+
+const ChatMessageContent = ({ msg }: { msg: Message }) => {
+  // Special handling for peanut emoji
+  if (msg.content === "🥜") {
+    return (
+      <motion.div 
+        className="text-6xl flex items-center justify-center py-2"
+        initial={{ scale: 0, rotate: -180 }}
+        animate={{ scale: 1, rotate: 0 }}
+        transition={{ duration: 0.6, type: "spring", stiffness: 100 }}
+      >
+        🥜
+      </motion.div>
+    );
+  }
+
+  const [displayText, setDisplayText] = useState(msg.strikethroughText || msg.content);
+  const [showReplacement, setShowReplacement] = useState(!msg.hasStrikethrough);
+
+  useEffect(() => {
+    if (msg.hasStrikethrough) {
+      const timer = setTimeout(() => {
+        setShowReplacement(true);
+        if (msg.replacementText) {
+          setDisplayText(msg.replacementText);
+        }
+      }, 2800);
+      return () => clearTimeout(timer);
+    }
+  }, [msg.hasStrikethrough, msg.replacementText]);
+
+  if (msg.hasStrikethrough && !showReplacement) {
+    return (
+      <motion.span 
+        animate={{ opacity: [1, 0.6, 0.8, 1, 0.7], y: [0, -1, 1, 0, -0.5] }}
+        transition={{ duration: 2.8, repeat: 0, ease: "easeInOut" }}
+        className="line-through opacity-60 inline-block"
+      >
+        {displayText}
+      </motion.span>
+    );
+  }
+
+  return (
+    <motion.span
+      initial={msg.hasStrikethrough ? { opacity: 0, y: -4 } : {}}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      {displayText}
+    </motion.span>
+  );
+};
 
 const ChatOverlay = ({ isOpen, onClose }: ChatOverlayProps) => {
   const { lang, t } = useLang();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [userHasAsked, setUserHasAsked] = useState(false);
+  const [secretRevealed, setSecretRevealed] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const prevLangRef = useRef(lang);
+  const introMessages = GREETINGS[lang];
+
+  // Check if the latest assistant message is the secret prompt
+  const isSecretPromptActive = messages.length > 0 && 
+    messages[messages.length - 1]?.role === "assistant" && 
+    (messages[messages.length - 1]?.content.includes("sırrımı verebilirim") ||
+     messages[messages.length - 1]?.content.includes("share a secret"));
 
   // Reset greeting when language changes or on first open
   useEffect(() => {
     if (prevLangRef.current !== lang || messages.length === 0) {
-      setMessages([{ role: "assistant", content: GREETINGS[lang] }]);
+      const initialMessages: Message[] = introMessages.map((msg) => ({ 
+        role: "assistant" as const,
+        content: msg.content,
+        hasStrikethrough: msg.hasStrikethrough,
+        strikethroughText: msg.strikethroughText,
+        replacementText: msg.replacementText,
+      }));
+      setMessages(initialMessages);
+      setUserHasAsked(false);
+      setSecretRevealed(false);
       prevLangRef.current = lang;
     }
-  }, [lang]);
-
-  // Initialize on mount
-  useEffect(() => {
-    if (messages.length === 0) {
-      setMessages([{ role: "assistant", content: GREETINGS[lang] }]);
-    }
-  }, []);
+  }, [lang, messages.length, introMessages]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const sendMessage = (text: string) => {
+  const sendMessage = async (text: string) => {
     if (!text.trim() || isLoading) return;
+    
+    const isFirstUserQuestion = !userHasAsked;
+    const msg = text.toLowerCase();
+    const isPositiveResponse = ["ver", "yes", "evet", "yeah", "tamam", "pls", "please"].some(k => msg.includes(k));
+    
     setMessages((prev) => [...prev, { role: "user", content: text }]);
     setInput("");
+    
+    // Handle secret reveal
+    if (isSecretPromptActive && isPositiveResponse && !secretRevealed) {
+      setSecretRevealed(true);
+      setMessages((prev) => [
+        ...prev,
+        { 
+          role: "assistant" as const, 
+          content: "🥜" 
+        },
+        { 
+          role: "assistant" as const, 
+          content: lang === "tr" ? "Sendemi buralardaydın (;" : "Were you here too? (;" 
+        },
+        { 
+          role: "assistant" as const, 
+          content: lang === "tr" ? "Öyle kolay düşmem, eheh..." : "Not that easy to fool me, eheh..." 
+        },
+      ]);
+      return;
+    }
+    
     setIsLoading(true);
-    const delay = 600 + Math.random() * 800;
-    setTimeout(() => {
-      setMessages((prev) => [...prev, { role: "assistant", content: getPersonaResponse(text, lang) }]);
+    
+    try {
+      // Get response from Grok API
+      const response = await getGrokResponse(text, messages, lang);
+      
+      setMessages((prev) => {
+        const updated = [...prev, { role: "assistant" as const, content: response }];
+        
+        // After first user question, add the "secret" follow-up
+        if (isFirstUserQuestion) {
+          const secretMsg = lang === "tr" 
+            ? "sana bir sırrımı verebilirim"
+            : "I can share a secret with you...";
+          updated.push({ 
+            role: "assistant" as const, 
+            content: secretMsg 
+          });
+        }
+        
+        return updated;
+      });
+      
+      if (isFirstUserQuestion) {
+        setUserHasAsked(true);
+      }
+    } catch (error) {
+      console.error("Error getting response:", error);
+      setMessages((prev) => [...prev, { role: "assistant", content: "I encountered an error. Please try again." }]);
+    } finally {
       setIsLoading(false);
-    }, delay);
+    }
   };
 
   const handleSend = () => sendMessage(input);
@@ -192,23 +425,37 @@ const ChatOverlay = ({ isOpen, onClose }: ChatOverlayProps) => {
 
             {/* Messages Container — Improved spacing & scrolling */}
             <div className="flex-1 overflow-y-auto p-5 space-y-4 scroll-smooth">
-              {messages.map((msg, i) => (
-                <motion.div 
-                  key={i} 
-                  initial={{ opacity: 0, y: 12, scale: 0.95 }} 
-                  animate={{ opacity: 1, y: 0, scale: 1 }} 
-                  transition={{ duration: 0.3, delay: i * 0.05 }}
-                  className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
-                >
-                  <div className={`max-w-[80%] px-4 py-3 rounded-[12px] text-[15px] font-normal leading-relaxed transition-all duration-200 ${
-                    msg.role === "user" 
-                      ? "chat-bubble-user shadow-[0_2px_8px_rgba(0,113,227,0.3)]" 
-                      : "chat-bubble-assistant dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.1)]"
-                  }`}>
-                    {msg.content}
-                  </div>
-                </motion.div>
-              ))}
+              {messages.map((msg, i) => {
+                const isIntroBubble = msg.role === "assistant" && i < introMessages.length;
+                const isPeanut = msg.content === "🥜";
+
+                return (
+                  <motion.div 
+                    key={i} 
+                    initial={{ opacity: 0, y: 20, scale: 0.9, x: msg.role === "user" ? 20 : -20 }} 
+                    animate={{ opacity: 1, y: 0, scale: 1, x: 0 }} 
+                    transition={{ duration: 0.5, delay: i * 0.22, type: "spring", stiffness: 80, damping: 15 }}
+                    className={`flex ${msg.role === "user" ? "justify-end" : "justify-center"}`}
+                  >
+                    {isPeanut ? (
+                      <ChatMessageContent msg={msg} />
+                    ) : (
+                      <motion.div
+                        whileHover={msg.role === "assistant" ? { scale: 1.02, y: -2, rotate: 1 } : {}}
+                        animate={{ y: [0, -2, 0], rotate: [0, 0.5, 0] }}
+                        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: i * 0.15 }}
+                        className={`max-w-[80%] px-4 py-3 rounded-[12px] text-[15px] font-normal leading-relaxed transition-all duration-200 ${
+                          msg.role === "user"
+                            ? "chat-bubble-user shadow-[0_2px_8px_rgba(0,113,227,0.3)]"
+                            : `chat-bubble-assistant dark:shadow-[inset_0_0_0_1px_rgba(255,255,255,0.1)] ${isIntroBubble ? "text-black/90 dark:text-[#f5f5f7]/95" : ""}`
+                        }`}
+                      >
+                        <ChatMessageContent msg={msg} />
+                      </motion.div>
+                    )}
+                  </motion.div>
+                );
+              })}
               {isLoading && (
                 <div className="flex justify-start">
                   <div className="bg-black/5 dark:bg-white/[0.08] px-4 py-3 rounded-[12px] rounded-bl-[2px] shadow-[inset_0_0_0_1px_rgba(0,0,0,0.05)]">
@@ -236,27 +483,31 @@ const ChatOverlay = ({ isOpen, onClose }: ChatOverlayProps) => {
             </div>
 
             {/* Quick Prompts — Enhanced sizing & interactivity */}
-            {messages.length === 1 && (
+            {messages.length === introMessages.length && (
               <motion.div 
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3, duration: 0.4 }}
+                transition={{ delay: 1.2, duration: 0.6 }}
                 className="px-5 pb-3 flex flex-wrap gap-2.5"
               >
-                {[t("chat.q1"), t("chat.q2"), t("chat.q3")].map((q, idx) => (
-                  <motion.button 
-                    key={q} 
-                    onClick={() => sendMessage(q)}
-                    whileHover={{ scale: 1.05, y: -2 }}
-                    whileTap={{ scale: 0.95 }}
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 + idx * 0.08, duration: 0.3 }}
-                    className="chat-quick-prompt bg-[#0071e3]/10 text-[#0071e3] hover:bg-[#0071e3]/20 border border-[#0071e3]/30 hover:border-[#0071e3]/50 shadow-none hover:shadow-[0_2px_8px_rgba(0,113,227,0.2)]"
-                  >
-                    {q}
-                  </motion.button>
-                ))}
+                {quickPrompts.slice(0, 3).map((prompt, idx) => {
+                  const promptText = prompt[lang];
+
+                  return (
+                    <motion.button 
+                      key={promptText} 
+                      onClick={() => sendMessage(promptText)}
+                      whileHover={{ scale: 1.05, y: -2 }}
+                      whileTap={{ scale: 0.95 }}
+                      initial={{ opacity: 0, y: 8, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      transition={{ delay: 1.0 + idx * 0.6, duration: 0.5, type: "spring", stiffness: 100 }}
+                      className="chat-quick-prompt bg-[#0071e3]/10 text-[#0071e3] hover:bg-[#0071e3]/20 border border-[#0071e3]/30 hover:border-[#0071e3]/50 shadow-none hover:shadow-[0_2px_8px_rgba(0,113,227,0.2)]"
+                    >
+                      {promptText}
+                    </motion.button>
+                  );
+                })}
               </motion.div>
             )}
 
