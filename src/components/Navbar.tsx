@@ -29,13 +29,9 @@ const Navbar = () => {
     <>
       {/* Navigation Bar */}
       <nav
-        className={`fixed top-0 w-full z-50 transition-all duration-500 bg-black/80 ${
+        className={`glass-nav fixed top-0 w-full z-50 transition-all duration-500 ${
           scrolled ? "py-2.5 shadow-[0_0_0_1px_rgba(255,255,255,0.1)]" : "py-3.5 shadow-[0_0_0_1px_rgba(255,255,255,0.05)]"
         }`}
-        style={{
-          backdropFilter: "saturate(180%) blur(20px)",
-          WebkitBackdropFilter: "saturate(180%) blur(20px)",
-        }}
       >
         <div className="apple-container flex justify-between items-center">
           {/* Logo & Brand */}
