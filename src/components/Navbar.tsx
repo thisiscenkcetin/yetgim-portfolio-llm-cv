@@ -46,6 +46,10 @@ const Navbar = () => {
             whileTap={{ scale: 0.98 }}
             transition={{ type: "spring", stiffness: 400, damping: 17 }}
           >
+            <span className="relative flex h-5 w-5 items-center justify-center">
+              <span className="absolute h-5 w-5 rounded-full bg-[#0071e3]/20 blur-[1px]" />
+              <span className="relative h-3 w-3 rounded-full bg-[#0071e3] shadow-[0_0_12px_rgba(0,113,227,0.45)]" />
+            </span>
             <span className="text-[#f5f5f7] text-sm font-semibold tracking-tight group-hover:text-[#0071e3] transition-colors duration-300">
               cenk.dev
             </span>
