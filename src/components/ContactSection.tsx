@@ -46,6 +46,16 @@ const ContactSection = () => {
             LinkedIn
           </motion.a>
           <motion.a 
+            href="https://www.instagram.com/cenk.php/" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="px-5 py-2.5 rounded-full text-sm font-semibold text-apple-blue bg-apple-blue/10 border border-apple-blue/30 hover:bg-apple-blue/20 transition-all duration-300"
+            whileHover={{ scale: 1.08, boxShadow: "0 0 15px rgba(0, 113, 227, 0.3)" }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Instagram
+          </motion.a>
+          <motion.a 
             href="https://behance.net/cenkcetin" 
             target="_blank" 
             rel="noopener noreferrer" 

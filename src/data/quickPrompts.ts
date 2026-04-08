@@ -9,10 +9,6 @@ export const quickPrompts: QuickPrompt[] = [
     tr: "Cenk ne yapar?",
   },
   {
-    en: "His hobbies?",
-    tr: "Hobileri?",
-  },
-  {
     en: "How can I contact him?",
     tr: "Nasıl ulaşırım?",
   },

@@ -81,7 +81,7 @@ const translations: Translations = {
   "chat.status": { en: "Online • Ask me anything", tr: "Çevrimiçi • Bana her şeyi sor" },
   "chat.placeholder": { en: "Ask me anything...", tr: "Bana bir şey sor..." },
   "chat.q1": { en: "What does Cenk do?", tr: "Cenk ne yapıyor?" },
-  "chat.q2": { en: "His hobbies?", tr: "Hobileri neler?" },
+  "chat.q2": { en: "How to contact?", tr: "Nasıl ulaşırım?" },
   "chat.q3": { en: "How to contact?", tr: "Nasıl ulaşırım?" },
 
   // Footer

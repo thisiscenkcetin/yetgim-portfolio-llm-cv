@@ -144,8 +144,8 @@ function getPersonaResponse(userMsg: string, lang: "en" | "tr"): string {
     tr: "Son dönemde C&D Ajans'ta; öncesinde Nokta Radio ve basın tarafında.",
     },
     hobby: {
-    en: "Running, weights, motorcycles, 3D printing, and AI research.",
-    tr: "Koşu, ağırlık, motosiklet, 3D baskı ve AI araştırması.",
+    en: "He loves his work, keeps building projects, and is into motorcycles, running, lifting, reading, listening, and trying new things.",
+    tr: "Mesleğine düşkün, sürekli proje geliştiriyor. Motor tutkunu; her gün koşar, ağırlık kaldırır. Okur, dinler, akademik gelişmeleri takip eder ve kariyeri için çalışır. Yeni şeyler denemeyi sever; adrenalin tutkunu.",
     },
     running: {
     en: "He runs every day. Weather doesn't get a vote.",
@@ -349,7 +349,7 @@ const ChatOverlay = ({ isOpen, onClose }: ChatOverlayProps) => {
         // After first user question, add the "secret" follow-up
         if (isFirstUserQuestion) {
           const secretMsg = lang === "tr" 
-            ? "sana bir sırrımı verebilirim"
+            ? "Sana bir sırrımı verebilirim"
             : "I can share a secret with you...";
           updated.push({ 
             role: "assistant" as const, 
@@ -434,7 +434,7 @@ const ChatOverlay = ({ isOpen, onClose }: ChatOverlayProps) => {
                     key={i} 
                     initial={{ opacity: 0, y: 20, scale: 0.9, x: msg.role === "user" ? 20 : -20 }} 
                     animate={{ opacity: 1, y: 0, scale: 1, x: 0 }} 
-                    transition={{ duration: 0.5, delay: i * 0.22, type: "spring", stiffness: 80, damping: 15 }}
+                    transition={{ duration: 0.8, delay: i * 0.35, type: "spring", stiffness: 80, damping: 15 }}
                     className={`flex ${msg.role === "user" ? "justify-end" : "justify-center"}`}
                   >
                     {isPeanut ? (
@@ -487,7 +487,7 @@ const ChatOverlay = ({ isOpen, onClose }: ChatOverlayProps) => {
               <motion.div 
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.2, duration: 0.6 }}
+                transition={{ delay: 0.3, duration: 0.4 }}
                 className="px-5 pb-3 flex flex-wrap gap-2.5"
               >
                 {quickPrompts.slice(0, 3).map((prompt, idx) => {
@@ -499,9 +499,9 @@ const ChatOverlay = ({ isOpen, onClose }: ChatOverlayProps) => {
                       onClick={() => sendMessage(promptText)}
                       whileHover={{ scale: 1.05, y: -2 }}
                       whileTap={{ scale: 0.95 }}
-                      initial={{ opacity: 0, y: 8, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      transition={{ delay: 1.0 + idx * 0.6, duration: 0.5, type: "spring", stiffness: 100 }}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1 + idx * 0.08, duration: 0.3 }}
                       className="chat-quick-prompt bg-[#0071e3]/10 text-[#0071e3] hover:bg-[#0071e3]/20 border border-[#0071e3]/30 hover:border-[#0071e3]/50 shadow-none hover:shadow-[0_2px_8px_rgba(0,113,227,0.2)]"
                     >
                       {promptText}
