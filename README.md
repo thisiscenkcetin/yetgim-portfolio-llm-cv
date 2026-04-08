@@ -2,6 +2,8 @@
 
 Kişisel portföy ve CV sitesi. React, Vite ve Tailwind ile hazırlandı; içinde kısa bir dijital ikiz sohbeti, iletişim alanı ve CV verileri var.
 
+https://yetgim-portfolio-llm-cv.vercel.app/
+
 ### Proje Önizlemeleri
 
 ![Demo 1](https://github.com/thisiscenkcetin/yetgim-portfolio-llm-cv/blob/main/demo/demo%20(1).png?raw=true)
