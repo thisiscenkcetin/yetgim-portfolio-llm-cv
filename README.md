@@ -1,6 +1,6 @@
 # Cenk Çetin Portfolio CV
 
-Kişisel portföy ve CV sitesi. React, Vite ve Tailwind ile hazırlandı; içinde kısa bir dijital ikiz sohbeti, iletişim alanı ve CV verileri var.
+Kişisel portföy ve CV sitesi. React, Vite ve Tailwind ile hazırlandı; içinde kısa bir dijital ikiz sohbeti, iletişim alanı ve CV verileri var. Grok api bağlanmadan sadece kalıp cevaplar verecektir...
 
 https://yetgim-portfolio-llm-cv.vercel.app/
 
